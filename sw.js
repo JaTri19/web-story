@@ -16,9 +16,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       return Promise.allSettled(
         ASSETS_TO_CACHE.map((url) =>
-          cache.add(url).catch((err) => {
-            console.warn('[SW] Failed to cache:', url, err);
-          })
+          cache.add(url).catch(() => {})
         )
       );
     }).then(() => self.skipWaiting())
@@ -31,7 +29,6 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME && cacheName !== 'api-cache') {
-            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -48,16 +45,22 @@ self.addEventListener('fetch', (event) => {
 
   if (url.origin === 'https://story-api.dicoding.dev') {
     event.respondWith(
-      caches.open('api-cache').then((cache) => {
-        return cache.match(request).then((cachedResponse) => {
-          const fetchPromise = fetch(request).then((networkResponse) => {
+      caches.open('api-cache').then(async (cache) => {
+        const cachedResponse = await cache.match(request);
+
+        const fetchPromise = fetch(request)
+          .then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
               cache.put(request, networkResponse.clone());
             }
             return networkResponse;
-          }).catch(() => cachedResponse); 
-          return cachedResponse || fetchPromise;
-        });
+          })
+          .catch(() => {
+            if (cachedResponse) return cachedResponse;
+            return new Response(null, { status: 503, statusText: 'Offline' });
+          });
+
+        return cachedResponse || fetchPromise;
       })
     );
     return;
@@ -69,6 +72,7 @@ self.addEventListener('fetch', (event) => {
         if (request.destination === 'document') {
           return caches.match(`${BASE}/index.html`);
         }
+        return new Response(null, { status: 503, statusText: 'Offline' });
       });
     })
   );
