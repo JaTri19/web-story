@@ -1,0 +1,51 @@
+{
+  "name": "Story Map App",
+  "short_name": "StoryMap",
+  "description": "Explore and share stories with location markers around the world.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e104e",
+  "theme_color": "#1e104e",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homescreen of Story Map"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile View of Story Map"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tambah Story",
+      "url": "#/add",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Story Guest",
+      "url": "#/add-guest",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
